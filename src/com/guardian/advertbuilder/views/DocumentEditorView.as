@@ -50,8 +50,8 @@ package com.guardian.advertbuilder.views
 			_canvas.addEventListener(CanvasEvent.ADD_HOTSPOT, onHotspotAdded);
 			addChild(_canvas);
 			//
-			_menuBar = new MenuBar();
-			addChild(_menuBar);
+			//_menuBar = new MenuBar();
+			//addChild(_menuBar);
 			//
 			_layerPalette = new LayerPalette();
 			addChild(_layerPalette);
@@ -104,11 +104,11 @@ package com.guardian.advertbuilder.views
 			}
 			
 			if(numOfLayers < _typeConfig.minLayers()) {
-				_menuBar.disablePreview();
-				_menuBar.disableExport();
+				//_menuBar.disablePreview();
+				//_menuBar.disableExport();
 			} else {
-				_menuBar.enablePreview();
-				_menuBar.enableExport();
+				//_menuBar.enablePreview();
+				//_menuBar.enableExport();
 			}
 		}
 		
@@ -145,6 +145,7 @@ package com.guardian.advertbuilder.views
 		}
 		
 		public function positionUI( width:Number, height:Number ):void {
+			/*
 			_menuBar.y = 0;
 			_menuBar.x = 0;
 			_menuBar.width = stage.stageWidth;
@@ -153,6 +154,19 @@ package com.guardian.advertbuilder.views
 			_toolBar.y = _menuBar.height;	
 			//
 			_layerPalette.y  = _menuBar.height + 20;
+			_layerPalette.x  = 0;
+			//
+			_hotspotPalette.x = Math.round((width / 2) - (_hotspotPalette.width/2));
+			_hotspotPalette.y = height -_hotspotPalette.height;    
+			//
+			_canvas.x = Math.round((width / 2) - (_canvas.width / 2));
+			_canvas.y = Math.round((height/ 2) - (_canvas.height/ 2));
+			 */
+			 
+			_toolBar.x = width - _toolBar.width;
+			_toolBar.y = 0;	
+			//
+			_layerPalette.y  = 20;
 			_layerPalette.x  = 0;
 			//
 			_hotspotPalette.x = Math.round((width / 2) - (_hotspotPalette.width/2));

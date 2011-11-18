@@ -1,5 +1,9 @@
 ﻿
 package com.guardian.advertbuilder {
+	import flash.ui.Keyboard;
+	import flash.globalization.NationalDigitsType;
+	import flash.display.NativeMenuItem;
+	import flash.display.NativeMenu;
 	import com.guardian.advertbuilder.views.palettes.LayerPaletteBox;
 	import com.guardian.advertbuilder.events.LayerEvent;
 	import com.guardian.advertbuilder.events.NewLayerEvent;
@@ -66,6 +70,9 @@ package com.guardian.advertbuilder {
 			// Kick off
 			NativeApplication.nativeApplication.addEventListener(InvokeEvent.INVOKE, onApplicationInvoked);
 			System.init();
+			System.buildDock();
+			System.buildSystemMenu(onMenuEvent);
+			//
 			AlertPane.parent(this);
 			NewLayerPane.parent(this);
 			//
@@ -80,10 +87,29 @@ package com.guardian.advertbuilder {
 				// Argument param contains selected files
 				if(event.arguments.length && event.arguments[0] is File) {
 					// File has been opened via icon double-click
-					AlertPane.show(event.type, event.reason);
+					AlertPane.show(event.type, event.reason	);
 					var file:File = event.arguments[0];
 					openSavedDocument(file);
 				}
+			}
+		}
+		
+		private function onMenuEvent(event:Event):void {
+			trace(event.target.label);
+			switch(event.target.label) {
+				case "New" :
+					onNewAdvert();
+					break;
+				case "Open File" :
+				case "Import" :
+					onOpenAdvert();
+					break;
+				case "Save" :
+					onSaveAdvert();
+					break;
+				case "Export" :
+					onExportAdvert();
+					break;
 			}
 		}
 		
@@ -101,8 +127,6 @@ package com.guardian.advertbuilder {
 			(event.target as Timer).removeEventListener(TimerEvent.TIMER, onRemoveLoadingScreen);
 			removeChild(_loadingView);
 			_loadingView = null;
-			//
-			showOpenDialog();
 		}
 		
 		private function showOpenDialog():void {
@@ -110,14 +134,12 @@ package com.guardian.advertbuilder {
 			_openView.setSizeData(Config.getSizesAsDataProvider());
 			_openView.setTypeData(Config.getTypesAsDataProvider());
 			_openView.addEventListener(DocumentEvent.NEW, onOpenNewDocument);
-			_openView.addEventListener(DocumentEvent.OPEN, onOpenSavedDocument);
 			//
 			addChild(_openView);
 		}
 		
 		private function removeOpenDialog():void {
 			_openView.removeEventListener(DocumentEvent.NEW, onOpenNewDocument);
-			_openView.removeEventListener(DocumentEvent.OPEN, onOpenSavedDocument);
 			removeChild(_openView);
 			_openView = null;
 		}
@@ -133,7 +155,7 @@ package com.guardian.advertbuilder {
 			showDocumentEditor();
 		}
 		
-		private function onOpenSavedDocument(event:DocumentEvent):void {
+		private function onOpenAdvert():void {
 			openSavedDocument();
 		}
 		
@@ -210,20 +232,29 @@ package com.guardian.advertbuilder {
 			var open:Import = event.target as Import;
 			_advert = open.getAdvert();
 			ADVERT_COUNT++;
-			removeOpenDialog();
 			showDocumentEditor(true);
 		}
 		
-		private function onNewAdvert(event:DocumentEvent):void {
-			AlertPane.show("Are you sure you want to begin again?").addEventListener(AlertEvent.OK, onInitNewAdvert);
+		private function onNewAdvert():void {
+			if(!_loadingView && !_openView) {
+				if(_advert) {
+					AlertPane.show("Close current file?").addEventListener(AlertEvent.OK, onInitNewAdvert);
+				} else {
+					createNewAdvert();
+				}
+			}
 		}
 		
 		private function onInitNewAdvert(event:AlertEvent):void {
-			LogApp.log("created new document");
 			(event.target as AlertPane).removeEventListener(AlertEvent.OK, onInitNewAdvert);
+			createNewAdvert();
 			removeDocumentEditor();
 			_advert.destroy();
 			_advert = null;
+		}
+		
+		private function createNewAdvert():void {
+			LogApp.log("created new document");
 			showOpenDialog();
 		}
 		
@@ -236,22 +267,24 @@ package com.guardian.advertbuilder {
 			_preview.height += rect.height;
 		}
 		
-		private function onSaveAdvert(event:DocumentEvent):void {
-			LogApp.log("saving advert");
-			try {
-				_export = new ExportForSaving(_advert);
-				_export.addEventListener(ExportEvent.FAILED, onExportFailed);
-				_export.addEventListener(ExportEvent.ERROR, onExportError);
-				_export.addEventListener(ExportEvent.SAVED, onSaveSuccess);
-				(_export as ExportForSaving).save();
-			} catch(error:Error) {
-				trace(error);
-				return;
+		private function onSaveAdvert():void {
+			if(_documentView && _advert) {
+				LogApp.log("saving advert");
+				try {
+					_export = new ExportForSaving(_advert);
+					_export.addEventListener(ExportEvent.FAILED, onExportFailed);
+					_export.addEventListener(ExportEvent.ERROR, onExportError);
+					_export.addEventListener(ExportEvent.SAVED, onSaveSuccess);
+					(_export as ExportForSaving).save();
+				} catch(error:Error) {
+					trace(error);
+					return;
+				}
 			}
 		}
 		
 		
-		private function onExportAdvert(event:DocumentEvent):void {
+		private function onExportAdvert():void {
 			LogApp.log("exporting advert");
 			try {
 				// Confirm if the advert is correctly formed
@@ -267,9 +300,7 @@ package com.guardian.advertbuilder {
 					_export.addEventListener(ExportEvent.SAVED, onExportSuccess);
 					(_export as ExportForDelivery).save();
 				} catch(error:Error) {
-					AlertPane.show(event.type);
 					removeExportListeners();
-					return;
 				}
 			}
 		}
@@ -278,12 +309,14 @@ package com.guardian.advertbuilder {
 			_export.removeEventListener(ExportEvent.FAILED, onExportFailed);
 			_export.removeEventListener(ExportEvent.ERROR, onExportError);
 			_export.removeEventListener(ExportEvent.SAVED, onSaveSuccess);
+			_export = null;
 		}
 		
 		private function removeExportListeners():void {
 			_export.removeEventListener(ExportEvent.FAILED, onExportFailed);
 			_export.removeEventListener(ExportEvent.ERROR, onExportError);
 			_export.removeEventListener(ExportEvent.SAVED, onExportSuccess);
+			_export = null;
 		}
 		
 		private function onExportFailed(event:ExportEvent):void {
