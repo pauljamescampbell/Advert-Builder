@@ -1,4 +1,5 @@
 package com.guardian.advertbuilder.views.palettes {
+	import com.guardian.advertbuilder.views.IDraggable;
 	import com.guardian.advertbuilder.advert.Layer;
 	import flash.display.DisplayObject;
 	import flash.display.Sprite;
@@ -10,11 +11,11 @@ package com.guardian.advertbuilder.views.palettes {
 	/**
 	 * @author plcampbell
 	 */
-	public class LayerPalette extends UILayerPalette {
+	public class LayerPalette extends UILayerPalette implements IDraggable {
 		
-		private static const LAYER_POSITION_X:Number = 5;
-		private static const LAYER_POSITION_Y:Number = 30;
-		private static const LAYER_MARGIN:Number = 3;
+		private static const LAYER_POSITION_X:Number = 3;
+		private static const LAYER_POSITION_Y:Number = 25;
+		private static const LAYER_MARGIN:Number = 1;
 		
 		private var _layerSprite:Sprite;
 		
@@ -24,6 +25,7 @@ package com.guardian.advertbuilder.views.palettes {
 			_layerSprite.y = LAYER_POSITION_Y;
 			addChild(_layerSprite);
 			enableAddLayer();
+			//_menu = new LayerContextMenu(this);
 		}
 		
 		public function addLayerBox(layer:LayerPaletteBox):void {
@@ -97,6 +99,7 @@ package com.guardian.advertbuilder.views.palettes {
 			for(var i:Number = 0; i<_layerSprite.numChildren;i++) {
 				disp = _layerSprite.getChildAt(i);
 				disp.y = (disp.height * i) + (LAYER_MARGIN * i);
+				(disp as LayerPaletteBox).bg.alpha = (i % 2);
 			}
 		}
 		

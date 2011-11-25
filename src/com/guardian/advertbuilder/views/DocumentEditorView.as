@@ -1,5 +1,7 @@
 package com.guardian.advertbuilder.views 
 {
+	import com.guardian.advertbuilder.utils.DraggablePalette;
+	import mx.validators.EmailValidator;
 	import com.guardian.advertbuilder.events.LayerEvent;
 	import com.guardian.advertbuilder.utils.StageResizer;
 	import com.guardian.advertbuilder.errors.AdvertError;
@@ -54,10 +56,14 @@ package com.guardian.advertbuilder.views
 			//addChild(_menuBar);
 			//
 			_layerPalette = new LayerPalette();
+			_layerPalette.y  = 20;
+			_layerPalette.x  = 20;
+			DraggablePalette.apply(_layerPalette);
 			addChild(_layerPalette);
 			//
 			_hotspotPalette = new HotspotPalette();
 			_hotspotPalette.disable();
+			DraggablePalette.apply(_hotspotPalette);
 			addChild(_hotspotPalette);
 			//
 			_toolBar = new ToolBar();
@@ -67,14 +73,25 @@ package com.guardian.advertbuilder.views
 			_toolBar.addEventListener(ViewEvent.TOOL_ZOOM, onToolModeSelect);
 			_toolBar.toggleToolButtonState(_toolMode);
 			_canvas.setToolMode(_toolMode);
+			DraggablePalette.apply(_toolBar);
 			addChild(_toolBar);
+			//
+			addEventListener(Event.ADDED_TO_STAGE, placeUI);
+		}
+		
+		private function placeUI(event:Event):void {
+			removeEventListener(Event.ADDED_TO_STAGE, placeUI);
+			//
+			_hotspotPalette.x = Math.round((width / 2) - (_hotspotPalette.width/2));
+			_hotspotPalette.y = height -_hotspotPalette.height - 20;
+			//
+			_toolBar.x = width - _toolBar.width - 10;
+			_toolBar.y = 20;	
 		}
 		
 		public function configureForType(config:AdvertConfig):void {
 			_typeConfig = config;
 		}
-		
-		
 		
 		public function addLayer( layer:Layer ):void {
 			var layerBox:LayerPaletteBox = new LayerPaletteBox(layer);
@@ -145,33 +162,11 @@ package com.guardian.advertbuilder.views
 		}
 		
 		public function positionUI( width:Number, height:Number ):void {
-			/*
-			_menuBar.y = 0;
-			_menuBar.x = 0;
-			_menuBar.width = stage.stageWidth;
-			//
-			_toolBar.x = width - _toolBar.width;
-			_toolBar.y = _menuBar.height;	
-			//
-			_layerPalette.y  = _menuBar.height + 20;
-			_layerPalette.x  = 0;
-			//
-			_hotspotPalette.x = Math.round((width / 2) - (_hotspotPalette.width/2));
-			_hotspotPalette.y = height -_hotspotPalette.height;    
-			//
-			_canvas.x = Math.round((width / 2) - (_canvas.width / 2));
-			_canvas.y = Math.round((height/ 2) - (_canvas.height/ 2));
-			 */
-			 
-			_toolBar.x = width - _toolBar.width;
-			_toolBar.y = 0;	
-			//
-			_layerPalette.y  = 20;
-			_layerPalette.x  = 0;
-			//
-			_hotspotPalette.x = Math.round((width / 2) - (_hotspotPalette.width/2));
-			_hotspotPalette.y = height -_hotspotPalette.height;    
-			//
+			this.graphics.clear();
+			this.graphics.beginFill(0xC0C0C0,1);
+			this.graphics.drawRect(0, 0, stage.stageWidth, stage.stageHeight);
+			this.graphics.endFill();
+			// 
 			_canvas.x = Math.round((width / 2) - (_canvas.width / 2));
 			_canvas.y = Math.round((height/ 2) - (_canvas.height/ 2));
 		}

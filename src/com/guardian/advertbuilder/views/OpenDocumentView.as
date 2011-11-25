@@ -15,7 +15,6 @@ package com.guardian.advertbuilder.views {
 			StageResizer.attach(this);
 			//
 			buttonCreate.addEventListener(MouseEvent.CLICK, onCreateNewDocument);
-			buttonOpen.addEventListener(MouseEvent.CLICK, onOpenNewDocument);
 		}
 		
 		public function onStageResize(event:Event):void {
@@ -39,10 +38,7 @@ package com.guardian.advertbuilder.views {
 			docEvent.adType= comboType.selectedLabel;
 			dispatchEvent(docEvent);
 		}
-		
-		private function onOpenNewDocument(event:Event):void {
-			dispatchEvent(new DocumentEvent(DocumentEvent.OPEN));
-		}
+
 		
 	}
 }

@@ -1,4 +1,6 @@
 package com.guardian.advertbuilder.views.canvas {
+	import com.guardian.advertbuilder.events.HotspotEvent;
+	import flash.events.ContextMenuEvent;
 	import org.bytearray.gif.player.GIFPlayer;
 	import com.guardian.advertbuilder.advert.Hotspot;
 	import com.guardian.advertbuilder.advert.Layer;
@@ -53,11 +55,11 @@ package com.guardian.advertbuilder.views.canvas {
 		 * 
 		 */
 		public function setHeight(height:Number):void {
-			_canvas.height = height;			
+			_canvas.height = height + 1;
 		}
 
 		public function setWidth(width:Number) : void {
-			_canvas.width = width;
+			_canvas.width = width + 1;
 		}
 		
 		public function setToolMode(mode:String):void {
@@ -93,9 +95,11 @@ package com.guardian.advertbuilder.views.canvas {
 			if(_layer.getImage().isAnimated()) {
 				var gif:GIFPlayer = _layer.getImage().getAnimation();
 				gif.play();
-				_sprite.addChildAt( gif, 0 );	
+				_sprite.addChildAt( gif, 0 );
+				gif.x = gif.y = 1;
 			} else {
 				_sprite.addChildAt( _layer.getImage().getBitmap(), 0 );
+				_layer.getImage().getBitmap().x = _layer.getImage().getBitmap().y = 1;
 			}
 		}
 		
@@ -110,10 +114,9 @@ package com.guardian.advertbuilder.views.canvas {
 			//
 			for(var a:Number = 0; a<hotspots.length;a++) {
 				canvasHotspot = new CanvasHotspot();
-				
+				canvasHotspot.addEventListener(HotspotEvent.REMOVE, onDeleteHotspot);
 				canvasHotspot.update(hotspots[a] as Hotspot);
 				_hotspotsSprite.addChild(canvasHotspot);
-				trace(_hotspotsSprite.numChildren);
 			}
 		}
 		 
@@ -171,7 +174,14 @@ package com.guardian.advertbuilder.views.canvas {
 			_selectedHotspot.highlight();
 			//
 			stage.addEventListener(MouseEvent.MOUSE_UP, onMouseUpOrOut);
-			stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);
+		}
+		
+		private function onDeleteHotspot(event:HotspotEvent):void {
+			trace(event);
+			if(event.target is CanvasHotspot) {
+				selectHotspot(event.target as CanvasHotspot);
+				removeSelectedHotspot();
+			}
 		}
 		
 		private function removeSelectedHotspot():void {
@@ -194,8 +204,7 @@ package com.guardian.advertbuilder.views.canvas {
 			if(_selectedHotspot) {
 				_selectedHotspot.downlight();
 				_selectedHotspot = null;
-				stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUpOrOut);
-				stage.addEventListener(KeyboardEvent.KEY_UP, onKeyUp);	
+				stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUpOrOut);	
 			}
 		}
 		
@@ -252,13 +261,6 @@ package com.guardian.advertbuilder.views.canvas {
 				
 				case ToolBar.TOOL_MODE_SELECT :
 					stopDraggingSelectedHotspot();
-			}
-		}
-		
-		private function onKeyUp(event:KeyboardEvent):void {
-			trace(event.charCode);
-			if(event.charCode == 8 && _selectedHotspot) {
-				removeSelectedHotspot();
 			}
 		}
 		

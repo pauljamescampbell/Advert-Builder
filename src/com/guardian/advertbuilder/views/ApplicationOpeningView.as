@@ -5,7 +5,7 @@ package com.guardian.advertbuilder.views {
 	/**
 	 * @author plcampbell
 	 */
-	public class ApplicationOpeningView extends UILoadingScreen implements IRepositionable, IResizeable {
+	public class ApplicationOpeningView extends UILoadingScreen implements IDraggable, IResizeable {
 	
 		public function ApplicationOpeningView() {
 			StageResizer.attach(this);

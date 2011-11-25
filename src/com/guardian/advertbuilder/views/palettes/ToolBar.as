@@ -1,10 +1,11 @@
 package com.guardian.advertbuilder.views.palettes {
+	import com.guardian.advertbuilder.views.IDraggable;
 	import com.guardian.advertbuilder.events.ViewEvent;
 	import flash.events.MouseEvent;
 	/**
 	 * @author plcampbell
 	 */
-	public class ToolBar extends UIToolBar {
+	public class ToolBar extends UIToolBar implements IDraggable {
 		
 		public static const TOOL_MODE_SELECT:String = "tool_mode_select";
 		public static const TOOL_MODE_HOTSPOT:String = "tool_mode_hotspot";
@@ -12,23 +13,27 @@ package com.guardian.advertbuilder.views.palettes {
 		
 		public function ToolBar() {
 			buttonSelect.useHandCursor = true;
-			buttonSelect.toggle = true;
 			buttonSelect.addEventListener(MouseEvent.CLICK, onSelect);
 			//
 			buttonHotspot.useHandCursor = true;
-			buttonHotspot.toggle = true;
 			buttonHotspot.addEventListener(MouseEvent.CLICK, onHotspot);
 		}
 		
 		public function toggleToolButtonState(tool:String):void {
-			buttonSelect.selected = false;
-			buttonHotspot.selected = false;
+			if(buttonHotspot.hitTestState) {
+				buttonHotspot.upState = buttonHotspot.hitTestState;  
+			}
+			if(buttonSelect.hitTestState) {
+				buttonSelect.upState = buttonSelect.hitTestState;  
+			}
 			switch(tool) {
 				case TOOL_MODE_SELECT :
-					buttonSelect.selected = true;
+					buttonSelect.hitTestState = buttonSelect.upState;
+					buttonSelect.upState = buttonSelect.downState;
 					break;
 				case TOOL_MODE_HOTSPOT:
-					buttonHotspot.selected = true;
+					buttonHotspot.hitTestState = buttonHotspot.upState;
+					buttonHotspot.upState = buttonHotspot.downState;
 					break; 
 			}
 		}
@@ -36,6 +41,7 @@ package com.guardian.advertbuilder.views.palettes {
 		private function onSelect(event:MouseEvent):void {
 			dispatchEvent(new ViewEvent(ViewEvent.TOOL_SELECT));
 		}
+		
 		private function onHotspot(event:MouseEvent):void { 
 			dispatchEvent(new ViewEvent(ViewEvent.TOOL_HOTSPOT));
 		}

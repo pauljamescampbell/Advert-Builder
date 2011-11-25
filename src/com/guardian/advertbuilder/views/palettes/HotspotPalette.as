@@ -1,4 +1,5 @@
 package com.guardian.advertbuilder.views.palettes {
+	import com.guardian.advertbuilder.views.IDraggable;
 	import com.guardian.advertbuilder.advert.Hotspot;
 	import com.guardian.advertbuilder.advert.Layer;
 	import fl.controls.ComboBox;
@@ -8,7 +9,7 @@ package com.guardian.advertbuilder.views.palettes {
 	/**
 	 * @author plcampbell
 	 */
-	public class HotspotPalette extends UIHotspotPalette {
+	public class HotspotPalette extends UIHotspotPalette implements IDraggable {
 		
 		public static const OPTION_NONE_SELECTED:String = "None selected";
 		

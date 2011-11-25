@@ -51,7 +51,6 @@ package com.guardian.advertbuilder {
 		public static var ADVERT_COUNT:Number = 0; 
 		
 		private var _newLayerName:String;
-		
 		private var _loadingView:ApplicationOpeningView;
 		private var _openView:OpenDocumentView;
 		private var _documentView:DocumentEditorView;
@@ -63,7 +62,7 @@ package com.guardian.advertbuilder {
 		public function GuardianAdBuilder() {
 			LogApp.log("initiating application");
 			
-			// Application config
+			// Application confx§ig
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.align = StageAlign.TOP_LEFT;
 			
