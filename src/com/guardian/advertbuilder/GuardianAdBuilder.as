@@ -62,7 +62,7 @@ package com.guardian.advertbuilder {
 		public function GuardianAdBuilder() {
 			LogApp.log("initiating application");
 			
-			// Application confx§ig
+			// Application config
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.align = StageAlign.TOP_LEFT;
 			
@@ -94,7 +94,6 @@ package com.guardian.advertbuilder {
 		}
 		
 		private function onMenuEvent(event:Event):void {
-			trace(event.target.label);
 			switch(event.target.label) {
 				case "New" :
 					onNewAdvert();
@@ -108,6 +107,11 @@ package com.guardian.advertbuilder {
 					break;
 				case "Export" :
 					onExportAdvert();
+					break;
+				case "Close" :
+					if(!_loadingView && !_openView && _documentView) {
+						closeAdvert();	
+					}
 					break;
 			}
 		}
@@ -246,7 +250,11 @@ package com.guardian.advertbuilder {
 		
 		private function onInitNewAdvert(event:AlertEvent):void {
 			(event.target as AlertPane).removeEventListener(AlertEvent.OK, onInitNewAdvert);
+			closeAdvert();
 			createNewAdvert();
+		}
+		
+		private function closeAdvert():void {
 			removeDocumentEditor();
 			_advert.destroy();
 			_advert = null;

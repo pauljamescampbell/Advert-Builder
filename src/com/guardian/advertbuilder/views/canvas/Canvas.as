@@ -38,6 +38,7 @@ package com.guardian.advertbuilder.views.canvas {
 		public function Canvas() {
 			_canvas = new UICanvas();
 			addChild(_canvas);
+			addEventListener(HotspotEvent.REMOVE, onDeleteHotspot); // global event catcher
 		}
 		
 		/*
@@ -114,7 +115,6 @@ package com.guardian.advertbuilder.views.canvas {
 			//
 			for(var a:Number = 0; a<hotspots.length;a++) {
 				canvasHotspot = new CanvasHotspot();
-				canvasHotspot.addEventListener(HotspotEvent.REMOVE, onDeleteHotspot);
 				canvasHotspot.update(hotspots[a] as Hotspot);
 				_hotspotsSprite.addChild(canvasHotspot);
 			}
@@ -165,6 +165,7 @@ package com.guardian.advertbuilder.views.canvas {
 			if(_selectedHotspot !== null) {
 				unselectHotspot();
 			}
+
 			_selectedHotspot = hotspot;
 			var rect:Rectangle = _canvas.getRect(this).clone();
 			rect.width -= _selectedHotspot.width;
@@ -177,7 +178,6 @@ package com.guardian.advertbuilder.views.canvas {
 		}
 		
 		private function onDeleteHotspot(event:HotspotEvent):void {
-			trace(event);
 			if(event.target is CanvasHotspot) {
 				selectHotspot(event.target as CanvasHotspot);
 				removeSelectedHotspot();
@@ -203,6 +203,7 @@ package com.guardian.advertbuilder.views.canvas {
 		private function unselectHotspot():void {
 			if(_selectedHotspot) {
 				_selectedHotspot.downlight();
+				_selectedHotspot.removeEventListener(HotspotEvent.REMOVE, onDeleteHotspot);
 				_selectedHotspot = null;
 				stage.removeEventListener(MouseEvent.MOUSE_UP, onMouseUpOrOut);	
 			}

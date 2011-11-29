@@ -101,6 +101,7 @@ package com.guardian.advertbuilder.io {
 				for(var i:Number = 0; i<layers.length; i++) {
 					layer = layers[i] as Layer;
 					itemLayer = new Object();
+					itemLayer.name = layer.getName(); // indicative of ads produced in the advert builder
 					itemLayer.media = new Object();
 					itemLayer.media.type = IMAGE_MEDIA_TYPE;
 					itemLayer.media.reference = $path + layer.getImage().getImageFilename();

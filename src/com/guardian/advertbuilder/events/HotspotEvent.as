@@ -8,7 +8,7 @@ package com.guardian.advertbuilder.events {
 		
 		public static const REMOVE:String = "remove";
 		
-		public function HotspotEvent(type : String, bubbles : Boolean = false, cancelable : Boolean = false) {
+		public function HotspotEvent(type : String, bubbles : Boolean = true, cancelable : Boolean = false) {
 			super(type, bubbles, cancelable);
 		}
 	}
